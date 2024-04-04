@@ -98,6 +98,21 @@ class Add(Function):
     @staticmethod
     def forward(ctx, input , )
 
+
+class Mul(Function):
+    @staticmethod
+    def forward(ctx, x , y):
+        ctx.save_for_backward(x, y)
+        return x*y
+    @staticmethod
+    def backward(ctx, grad_output):
+        x, y = ctx.saved_tensors
+        grad_x = y*grad_output
+        grad_y = x*grad_output
+        return grad_x, grad_y
+register('Mul' , Mul)
+
+        return 
 class Sum(Function):
     @staticmethod
     def forward(ctx, input):
