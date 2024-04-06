@@ -1,1 +1,1 @@
-Fun project for me. I really want to understand the core of ai. I want to understand pytorch in depth so let's build our own library and using our own library build AI projects too. If you want to contribute then add new features or improve a code. 
+Fun project for me. I really want to understand the core of ai. I want to understand pytorch in depth so let's build our own library and using our own library we are going to build AI projects too. If you want to contribute then add new features or improve a code. 
