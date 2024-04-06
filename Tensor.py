@@ -1,6 +1,6 @@
 from functools import partialmethod
 import numpy as np
-
+import math
 class Context:
     def __init__(self, arg, *tensors):
         self.arg = arg # output after forward prop
@@ -26,7 +26,7 @@ class Tensor:
         self.grad = None
 
         # internal variables used for autograd graph constructtion
-       self._ctx = None
+        self._ctx = None 
     
     def __str__(self):
         return "Tensor %r with grad %r" % (self.data , self.grad)
@@ -51,6 +51,10 @@ class Tensor:
                 assert(False)
             t.grad = g
             t.backward(False)
+        
+        def mean(self):
+            div = Tensor(np.array([1/self.data.size]))
+            return self.sum().mul(div)
 
 
 class Function:
@@ -96,8 +100,13 @@ register('dot' , Dot)
 
 class Add(Function):
     @staticmethod
-    def forward(ctx, input , )
-
+    def forward(ctx, x , y):
+        ctx.save_for_backward(x,y)
+        return x+y;
+    @staticmethod
+    def backward(ctx, grad_output):
+        return grad_output, grad_output 
+register('add', Add)
 
 class Mul(Function):
     @staticmethod
@@ -110,9 +119,9 @@ class Mul(Function):
         grad_x = y*grad_output
         grad_y = x*grad_output
         return grad_x, grad_y
-register('Mul' , Mul)
+register('mul' , Mul)
 
-        return 
+  
 class Sum(Function):
     @staticmethod
     def forward(ctx, input):
@@ -124,6 +133,20 @@ class Sum(Function):
         return grad_output * np.ones_like(input)
 
 register('sum' , Sum)
+
+class Tanh(Function):
+    @staticmethod
+    def forward(ctx, x):
+        ctx.save_for_backward(input)
+        t =  (math.exp(2*x) - 1)/(math.exp(2*x) + 1)
+        ctx.t = t
+        return t
+    @staticmethod
+    def backward(ctx, grad_output):
+        x = ctx.saved_tensors
+        t = ctx.t
+        return (1-t**2) * grad_output
+register('tanh', Tanh)
 
 class LogSoftmax(Function):
     @staticmethod
